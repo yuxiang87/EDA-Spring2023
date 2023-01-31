@@ -63,7 +63,7 @@ class(df_car_speed)
 
 ## Adding columns to a data frame
 
-How could you add columns to *df_car_speed*?
+How could you add columns to *df_car_speed*? **Aasdads**
 
 ```{r}
 car_dist <- cars$dist
@@ -108,11 +108,12 @@ nrow(df)
 length(df)  #same as ncol
 summary(df)
 head(df) #show the first 6 rows of df
-
+head(df,10) #show the first 10 rows
 #If you know the number of the column you want you can refer to that to access column
 df[,1]
+a <- df[10:20,1];a
 
 #you could also use this notation to delete columns
-df <- df[,-2]
-df
+df3 <- df[,-2]
+df3
 ```
