@@ -1,0 +1,97 @@
+---
+title: "A02_note"
+author: "Yuxiang"
+date: "2023-02-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## function note
+1.in print,must use "" , or object 'word' not found. However, it can print TRUE and FALSE
+2."if else" for vector ‘the condition has length > 1'
+
+```{r function}
+#test 1 TRUE vs "TRUE"; result : TRUE vs ""TRUE 
+above50 <- function(x) {
+  if (x > 50){
+  print (TRUE)
+    } else if (x < 50){
+  print (FALSE)
+    } else {print(FALSE)
+    }}
+
+above50(78)
+above50(90)
+above50(32)
+above50(66)
+above50(Score)
+
+above51 <- function(x) {
+  if (x > 50){
+  print ("TRUE")
+    } else if (x < 50){
+  print ("FALSE")
+    } else {print("FALSE")
+    }}
+above51(50)
+above51(60)
+above51(30)
+above51(Score)
+
+#test 2 other words; result: need ""; or object 'word' not found
+above52 <- function(x) {
+  if (x > 50){
+  print ("correct")
+    } else if (x < 50){
+  print ("ncorrect")
+    } else {print("ncorrect")
+    }}
+
+above53 <- function(x) {
+  if (x > 50){
+  print (correct)
+    } else if (x < 50){
+  print (ncorrect)
+    } else {print(ncorrect)
+    }}
+
+## in print,must use "" , or object 'word' not found. However, it can print TRUE and FALSE
+above53(50)
+above53(60)
+above53(30)
+
+
+#test 3, print in ifelse.
+
+
+
+above <- function(x){
+  ifelse(x < 50, print("FALSE"), print("TRUE"))}
+above(50)
+above(Score)
+above(50)
+above(60)
+above(30)
+
+result <- above(40); result
+
+above1 <- function(x){
+  ifelse(x < 50, print(print("FALSE")), print("TRUE"))}
+
+above1(50)
+above1(Score)
+
+above2 <- function(x){
+  ifelse(x < 50, {print("FALSE");"FALSE"},print("TRUE"))
+}
+above2(50)
+above2(Score)
+
+
+
+
+```
+
