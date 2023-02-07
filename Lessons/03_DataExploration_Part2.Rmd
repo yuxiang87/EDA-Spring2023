@@ -154,6 +154,13 @@ ggplot(USGS.flow.data) +
 Question: under what circumstances would it be beneficial to use each of these graph types (bar plot, histogram, frequency polygon, box-and whisker, violin, scatterplot)?
 
 > Answer: 
+bar plot: comparing differernt category value. river discharge values
+histogram: frequency. show how many days of high discharge day in one year.
+frequency polygon: frequency and value, trends? one river discharge change.
+box-and whisker: summary of value, value compostion. compare rivers discharge.
+violin:similar to box and whisker, but count outliers, more smooth?
+
+
 
 ## Ending discussion
 
@@ -164,6 +171,7 @@ What did you learn about the USGS discharge dataset today? What separate insight
 How can multiple options for data exploration inform our understanding of our data?
 
 > Answer: 
+Different methods are suitable for presenting different information. 
 
 
 Do you see any patterns in the USGS data for the Eno River? What might be responsible for those patterns and/or relationships?
