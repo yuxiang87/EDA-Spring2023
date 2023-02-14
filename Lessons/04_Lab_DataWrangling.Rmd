@@ -122,6 +122,12 @@ NTL.phys.19991990.Tues.July.meanT <- NTL.phys.19991990.Tues.July %>%
   filter(depth == 0) %>% 
   filter(!is.na(temperature_C)) %>% 
   summarise(meanTemperature = mean(temperature_C))
+
+# or use drio_na
+NTL.phys.19991990.Tues.July.meanT_2 <- NTL.phys.19991990.Tues.July %>% 
+  filter(depth == 0) %>% 
+  drop_na(temperature_C) %>% 
+  summarise(meanTemperature = mean(temperature_C))
   
 summary(NTL.phys.19991990.Tues.meantemperature)
 is.na(NTL.phys.19991990.Tues.meantemperature$depth)
@@ -138,8 +144,14 @@ For gather we will use `pivot_longer` and for spread we will use `pivot_wider`.
 #  the new column holding the irradiance type as "Irradiance_Type", and name the
 #  new column holding the irradiance values as "Irradiance_Value".
 
+NTL.Irradiance <- pivot_longer(NTL.phys.data,irradianceWater:irradianceWater, names_to = "Irradiance_Type",values_to = "Irradiance_Value")
 
 #Exercise 6: Spread temperatureC into more than one column based on the depth.
+NTL.depthclass.temperatureC.spread <-NTL.phys.data %>% 
+  pivot_wider(names_from = "depth", 
+   values_from = "temperature_C") 
+  
+
 
 ```
 
