@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4: Data Wrangling"
-author: "Student Name"
+author: "Yuxiang Ren"
 date: "Spring 2023"
 output: pdf_document
 geometry: margin=2.54cm
@@ -40,12 +40,34 @@ The completed exercise is due on Friday, Feb 20th @ 8:00am.
 ## Set up your session 
 1. Check your working directory, load the `tidyverse` and `lubridate` packages, and upload all four raw data files associated with the EPA Air dataset, being sure to set string columns to be read in a factors. See the README file for the EPA air datasets for more information (especially if you have not worked with air quality data previously). 
 
+```{r packages}
+library(tidyverse)
+library(lubridate)
+
+O3_2018 <- read.csv("./Data/Raw/EPAair_O3_NC2018_raw.csv",stringsAsFactors = T)
+O3_2019 <- read.csv("./Data/Raw/EPAair_O3_NC2019_raw.csv",stringsAsFactors = T)
+PM_2018 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv",stringsAsFactors = T)
+PM_2019 <- read.csv("./Data/Raw/EPAair_PM25_NC2019_raw.csv",stringsAsFactors = T)
+```
+
 2. Explore the dimensions, column names, and structure of the datasets. 
 
 ```{r, message = FALSE}
-#1
+#1 O3_2018 & O3_2019
+dim(O3_2018)
+colnames(O3_2018)
+str(O3_2018)
+dim(O3_2019)
+colnames(O3_2019)
+str(O3_2019)
 
-#2
+#2 PM25_2018 PM 2019
+dim(PM_2018)
+colnames(PM_2018)
+str(PM_2018)
+dim(PM_2019)
+colnames(PM_2019)
+str(PM_2019)
 ```
 
 ## Wrangle individual datasets to create processed files.
