@@ -85,8 +85,19 @@ PM_2018_columns <- select(PM_2018, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMET
 PM_2019_columns <- select(PM_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMETER_DESC, COUNTY, SITE_LATITUDE, SITE_LONGITUDE)
 
 #5
+PM_2019_columns$AQS_PARAMETER_DESC <- "PM2.5"
+PM_2018_columns$AQS_PARAMETER_DESC <- "PM2.5"
 
-#6
+#6 save
+write.csv(O3_2018_columns, row.names = FALSE, 
+          file = "./Data/Processed/EPAair_O3_NC2018_processed.csv")
+write.csv(O3_2019_columns, row.names = FALSE, 
+          file = "./Data/Processed/EPAair_O3_NC2019_processed.csv")
+write.csv(PM_2018_columns, row.names = FALSE, 
+          file = "./Data/Processed/EPAair_PM25_NC2018_processed.csv")
+write.csv(PM_2019_columns, row.names = FALSE, 
+          file = "./Data/Processed/EPAair_PM25_NC2019_processed.csv")
+
 
 ```
 
@@ -113,15 +124,25 @@ PM_2019_columns <- select(PM_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMET
 
 ```{r}
 #7 
-
+A04 <- rbind(O3_2018_columns, O3_2019_columns,PM_2018_columns,PM_2019_columns)
 #8 
 
+A04_commonsite <- A04 %>% 
+   filter(Site.Name %in% c("Linville Falls", "Durham Armory", "Leggett", "Hattie Avenue", "Clemmons Middle", "Mendenhall School", "Frying Pan Mountain", "West Johnston Co.", "Garinger High School", "Castle Hayne", "Pitt Agri. Center", "Bryson City", "Millbrook School")) %>%
+  group_by(Date, Site.Name, AQS_PARAMETER_DESC, COUNTY) %>% 
+  summarize(mean_AQI = mean(DAILY_AQI_VALUE), mean_Latitude = mean(SITE_LATITUDE), mean_Longitude = mean(SITE_LONGITUDE)) %>% 
+  mutate(Month = month(Date), Year = year(Date))
+  
 #9
+A04_spread <- A04_commonsite %>% 
+  pivot_wider(names_from = "AQS_PARAMETER_DESC", 
+   values_from = "mean_AQI") 
 
 #10
+dim(A04_spread)
 
 #11
-
+write.csv(A04_spread, row.names = FALSE, file = "./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv")
 ```
 
 
@@ -134,13 +155,21 @@ PM_2019_columns <- select(PM_2019, Date, DAILY_AQI_VALUE, Site.Name, AQS_PARAMET
 ```{r}
 
 #12
-
+A04_mean <- A04_spread %>% group_by(Site.Name, Month, Year) %>%
+  summarize(mean_ozone = mean(Ozone, na.rm = TRUE),
+            mean_PM2.5 = mean(PM2.5)) %>%
+  drop_na(mean_ozone)
+A04_mean_ma.omit <- A04_spread %>% group_by(Site.Name, Month, Year) %>%
+  summarize(mean_ozone = mean(Ozone, na.rm = TRUE),
+            mean_PM2.5 = mean(PM2.5)) %>%
+  na.omit()
 
 #13
-
+dim(A04_mean)
 
 ```
 
 14. Why did we use the function `drop_na` rather than `na.omit`?
 
 > Answer: 
+Because we only removed the NA values of a column in the data frame. If use ‘na.omit’, it would remove all NA values for the whole data frame, due to its object being a 'data.table'.
