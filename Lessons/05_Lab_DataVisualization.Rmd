@@ -28,7 +28,7 @@ library(ggridges)
 library(viridis)
 library(RColorBrewer)
 library(colormap)
-
+library(viridisLite)
 #Add pre-set themes <--NEW
 library(ggthemes)
 ```
@@ -49,6 +49,9 @@ ggplot(data=data.frame(x=0,y=0))+
     label=expression(paste("Mean is ", mu,",", R^{2},'=0.6'))
     )
 
+#paste&, paste0
+paste("A", "B")
+paste0("A", "B")
 #Print the plot
 print(Plot_text)
 
@@ -93,15 +96,30 @@ Say we want to plot the number of records each month in the Peter/Paul lakes dat
 
 ```{r Plot the number of records by month}
 #What kind of values are months?
+str(PeterPaul.chem.nutrients$month)
 
 #List unique values
-
+unique(PeterPaul.chem.nutrients$month)
 #Plot how many Lake observations occur each month
+ggplot(PeterPaul.chem.nutrients, aes(x = month))+
+  geom_histogram(bins = 12)
 
 #Convert month to a factor -- with 12 levels, labelled with month names
+factor(PeterPaul.chem.nutrients$month, levels = 1:12)
+
+
 
 #Try again: Plot how many Lake observations occur each month
+ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, level = 1:12, labels = c(month.abb))))+
+  geom_bar()+
+  scale_x_discrete(drop = FALSE) +
+  labs(title = "My Plot",
+          x = "Month")
 
+ggplot(PeterPaul.chem.nutrients, aes(x = factor(month, level = 1:12, labels = c(month.abb))))+
+  geom_bar()+
+  scale_x_discrete(drop = FALSE) +
+  xlab('Month')
 #Alter to include missing months
 
 #Tidy up the code
@@ -224,8 +242,22 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 
-# 1. 
+# 1.
+surface <- filter(PeterPaul.chem.nutrients, depth == "0")
+ggplot(surface, aes(x = daynum, y = temperature_C, color = year4))+
+         geom_point(size= 0.5)+
+  facet_wrap(vars(lakename), nrow = 2)+
+  ylab('Suurface Temperature')
+
+PeterPaul.chem.nutrients %>% filter(depth == 0) %>% 
+  ggplot( aes(x = daynum, y = temperature_C, color = year4))+
+         geom_point(size= 0.5,alpha= 0.5)+
+  facet_wrap(vars(lakename), nrow = 2)+
+  ylab('Suurface Temperature')
+
+  
 # Plot surface temperatures by day of  year. 
+##note by +x ----day is x
 # Color your points by year, and facet by lake in two rows.
 # Change the ylab name
 
@@ -235,6 +267,19 @@ Exercise: build your own scatterplots of PeterPaul.chem.nutrients
 # Change the size of your point to 0.5
 # Change the color palette to magma and play with direction (+- 1), which one makes more sense?
 # Change x axis to include marker/labels every 5 years
+
+ggplot(PeterPaul.chem.nutrients, aes(x = sampledate, y = temperature_C, color = depth))+
+  geom_point(size = 0.5)+
+   scale_color_viridis(option = "magma", direction = -1)+
+  
+  
+
+
+
+
+
+
+
 
 
 
