@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Yuxiang Ren"
 date: "Spring 2023"
 output: pdf_document
 geometry: margin=2.54cm
@@ -32,8 +32,22 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 
 ```{r initialize project}
 #1 
+library(tidyverse);library(lubridate);library(here);library(cowplot)
+library(ggplot2)
+here() #verify home directory
+#raw data
+Lake <- read.csv("./Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv",
+                 stringsAsFactors = T)
+Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv",
+                   stringsAsFactors = T)
 
 #2 
+#date format
+Lake$sampledate <- ymd(Lake$sampledate)
+Litter$collectDate <- ymd(Litter$collectDate)
+
+
+
 
 ```
 ## Define your theme
@@ -46,6 +60,11 @@ This exercise accompanies the lessons in Environmental Data Analytics on Data Vi
 
 ```{r build plot theme}
 #3
+mytheme <- theme_bw(base_size = 14) +
+  theme(axis.text = element_text(size = 11, color = "black"), 
+        axis.title = element_text(size = 13, color = "black"))+
+  theme(legend.title = element_text(size = 13, color = "black"))
+
 
 ```
 
@@ -56,6 +75,13 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r plot total P vs PO4}
 #4 
+Q4 <- ggplot(Lake, aes(x = po4,y = tp_ug, color = lakename))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE, color = "black")+
+  labs(x = "Phosphate", y = "Total Phosphorus ", 
+       color = "Lake")+
+  xlim(0,50)
+print(Q4)
 
 ```
 
@@ -66,12 +92,45 @@ Tip: R has a build in variable called `month.abb` that returns a list of months;
 
 ```{r Create boxplots}
 #5 
+str(Lake$month)
+Lake$month <- factor(Lake$month,levels = 1:12)
+#temperature
+boxplot1 <- ggplot(Lake, aes(x = factor(month, level = 1:12, labels = c(month.abb)), y = temperature_C, fill = lakename))+
+  geom_boxplot()+ 
+  labs(x = "Month", y = "Temperature", fill = "Lake")+
+  xlab(NULL)
+
+#TP
+boxplot2 <- ggplot(Lake, aes(x = factor(month, level = 1:12, labels = c(month.abb)), y = tp_ug, fill = lakename))+
+  geom_boxplot()+ 
+  labs(x = "Month", y = "TP", fill = "Lake") +
+  xlab(NULL)
+
+#TN
+boxplot3 <- ggplot(Lake, aes(x = factor(month, level = 1:12, labels = c(month.abb)), y = tn_ug, fill = lakename))+
+  geom_boxplot()+ 
+  labs(x = "Month", y = "TN", fill = "Lake")
+
+#extract legend
+legend_Q5 <- get_legend(boxplot1)
+#no legend grid
+plot_all_raw <- plot_grid(
+  boxplot1 + theme(legend.position = "none"),
+  boxplot2 + theme(legend.position = "none"),
+  boxplot3 + theme(legend.position = "none"),
+  align = 'v',
+  ncol = 1
+)
+# share legend 
+plot_grid(plot_all_raw, legend_Q5, rel_widths = c(4, 1))
 
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
 > Answer: 
+There is not much difference in temperature between the two lakes, and each month has a similar temperature range. It can be observed that in June, July, and September, the values of TP and TN in Lake Paul are higher than those in Lake Peter, and the maximum value of Lake PAUL is also higher.
+
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
@@ -79,12 +138,21 @@ Question: What do you observe about the variables of interest over seasons and b
 
 ```{r Plot litter}
 #6
-
-
+Needles <- filter(Litter, functionalGroup == "Needles")
+Plot_Q6 <- ggplot(Needles, aes(x = collectDate, y = dryMass, color = nlcdClass)) +
+  geom_point(alpha = 0.7) +
+  labs(x = "Date", y = "Dry mass of needle litter", color = "NLCD class")
+print(Plot_Q6)
 #7
 
+Plot_Q7 <- ggplot(Needles, aes(x = collectDate, y = dryMass)) +
+  geom_point() +
+  facet_wrap(vars(nlcdClass), nrow = 1)+
+  labs(x = "Date", y = "Dry mass of needle litter")
+print(Plot_Q7)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
 > Answer:
+I think that Plot_Q7 is more effective because the different NLCD classes in Plot_Q7 are divided into different areas, which is easier to observe than the large number of overlapping points in Plot_Q6.
