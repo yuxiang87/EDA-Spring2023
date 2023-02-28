@@ -74,6 +74,7 @@ For the NTL-LTER dataset, can we predict irradiance (light level) from depth?
 
 ```{r}
 irradiance.regression <- lm(PeterPaul.chem.nutrients$irradianceWater ~ PeterPaul.chem.nutrients$depth)
+summary(irradiance.regression)
 
 # another way to format the lm() function
 irradiance.regression <- lm(data = PeterPaul.chem.nutrients, irradianceWater ~ depth)
@@ -101,6 +102,9 @@ An exploratory option to visualize the model fit is to use the function `plot`. 
 ```{r, fig.height = 3, fig.width = 4}
 par(mfrow = c(2,2), mar=c(4,4,4,4))
 plot(irradiance.regression)
+#note, plot 1, right side not fit, maybe remove these.plot4 dash line --outlayer
+
+
 par(mfrow = c(1,1))
 ```
 
@@ -128,6 +132,7 @@ plot(irradiance.regression2)
 par(mfrow = c(1,1))
 
 # Add a line and standard error for the linear regression
+#note y-axis transfer to log 
 irradiancebydepth2 <- 
   ggplot(PeterPaul.chem.nutrients, aes(x = depth, y = irradianceWater)) +
   geom_smooth(method = "lm") +
@@ -164,6 +169,7 @@ print(TPplot)
 par(mfrow = c(2,2), mar=c(4,4,4,4))
 plot(TPregression)
 par(mfrow = c(1,1))
+#note, plot1 , wnat the red line flat.
 
 ```
 
@@ -172,6 +178,7 @@ We can also make exploratory plots of several continuous data points to determin
 
 ```{r, fig.height = 3, fig.width = 4}
 #install.packages("corrplot")
+#note correlataion 
 library(corrplot)
 PeterPaulnutrients <- 
   PeterPaul.chem.nutrients %>%
@@ -179,6 +186,7 @@ PeterPaulnutrients <-
   na.omit()
 PeterPaulCorr <- cor(PeterPaulnutrients)
 corrplot(PeterPaulCorr, method = "ellipse")
+#note--thin----stright estimation line. color---positive to negative.
 corrplot.mixed(PeterPaulCorr, upper = "ellipse")
 ```
 
@@ -201,4 +209,6 @@ step(TPAIC)
 TPmodel <- lm(data = Paul.naomit, tp_ug ~ dissolvedOxygen + temperature_C + tn_ug)
 summary(TPmodel)
 
+##note when check AIC, value, when the value increase with removing, it means the condition become worse. it end with the AIC not decrease. and get the best estimated regression.
+## note, meanwhile the end of the result aslo shows the Coef
 ```
