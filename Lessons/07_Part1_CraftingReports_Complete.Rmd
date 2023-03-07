@@ -67,7 +67,9 @@ See: <https://rmarkdown.rstudio.com> and class recording.
 >Fill in our discussion below with bullet points. Use italics and bold for emphasis (hint: use the cheat sheets or `Help` →`Markdown Quick Reference` to figure out how to make bold and italic text).
 
 * R Markdown is limited to ~~one language~~ **many languages**
-* (Add more bullets here)
+* R Markdown can use _italics_ for emphasis
+* R Markdown can use __bold__ for emphasis
+* R Markdown can use ___italics and bold___ for emphasis
 
 ## TEXT EDITING CHALLENGE
 
@@ -87,7 +89,7 @@ Create a table below that details the example datasets we have been using in cla
 Create an R chunk below that installs the package `knitr`. Instead of commenting out the code, customize the chunk options such that the code is not evaluated (i.e., not run).
 
 ```{r install.package, eval=FALSE}
-install('knitr')
+install.packages('knitr')
 
 ```
 
