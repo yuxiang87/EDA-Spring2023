@@ -83,15 +83,25 @@ BR_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 ```{r}
 
 #Exercise 5: Check if there is any missing data for both temperature and rainfall series.
-
-
+##Note-using time sequence to left join the oringinal data.
+summary(BR_complete$Date)
+summary(BR_complete)
 
 
 #Exercise 6: Plot both series over time on separate plots. Add a trend line using geom_smooth(). Can you say something about the trend just by visualizing the data?
+#Rainfall
+Rainfall_Plot <- 
+ggplot(BR_complete, aes(Date, Rainfall))+
+  geom_line()+
+  geom_smooth(method = "lm")
+plot(Rainfall_Plot)
 
-
-
-
+#Temperature
+Temperature_C <- 
+ggplot(BR_complete, aes(Date, Temperature_C))+
+  geom_line()+
+  geom_smooth(method = "lm")
+plot(Temperature_C)
 
 
 ```
@@ -100,8 +110,12 @@ BR_complete <- inner_join(Rainfall_BR_processed,Temp_BR_processed)
 
 ```{r}
 #Exercise 7: Create a time series objects for each series using ts(). Make sure you specify the starting point and frequency.
+f_month <- month(first(BR_complete$Date))
+f_year <- year(first(BR_complete$Date))
 
+ts_temperature <- ts(BR_complete$Temperature_C, start = c(f_year,f_month), frequency = 12)
 
+ts_Rainfall <- ts(BR_complete$Rainfall, start = c(1901,1), frequency = 12)
 
 ```
 
@@ -123,26 +137,49 @@ The `stl` function decomposes the time series object into its component parts. W
 # Exercise 8: Use the stl() function to decompose both series. 
 # Visualize the decomposed series using plot(). What components can you identify?
 
+stl_ts_temperature <- stl(ts_temperature, s.window = "periodic")
+plot(stl_ts_temperature)
 
-
-
+stl_ts_Rainfall <- stl(ts_Rainfall, s.window = "periodic")
+plot(stl_ts_Rainfall)
 
 
 # Exercise 9: Use the times series object generated with the stl() to extract the 
 # components of each series and turn them into data frames.
-
-
-
-
-
+##temperature
+Temperature_Components <- as.data.frame(stl_ts_temperature$time.series)
+Temperature_Components <- mutate(Temperature_Components,
+          Observed = BR_complete$Temperature_C,     
+        Date = BR_complete$Date)
+##Rainfall
+Rainfall_Components <- as.data.frame(stl_ts_Rainfall$time.series)
+Rainfall_Components <- mutate(Rainfall_Components,
+          Observed = BR_complete$Rainfall,     
+        Date = BR_complete$Date,seasonal_shift = Rainfall_Components$seasonal + 145.1604)
+mean(Rainfall_Components$trend)
 
 # Exercise 10: Visualize how the trend maps onto the data for both series
+#Trend
+ggplot(Temperature_Components) +
+  geom_line(aes(y = Observed, x = Date),  size = 0.25) +
+  geom_line(aes(y = trend, x = Date), color = "#c13d75ff") 
 
+ggplot(Rainfall_Components) +
+  geom_line(aes(y = Observed, x = Date),  size = 0.25) +
+  geom_line(aes(y = trend, x = Date), color = "#c13d75ff") 
+#seasonal 
 
+ggplot(Temperature_Components) +
+  geom_line(aes(y = Observed, x = Date),  size = 0.25) +
+  geom_line(aes(y = seasonal, x = Date), color = "#c13d75ff") 
 
+ggplot(Rainfall_Components) +
+  geom_line(aes(y = Observed, x = Date),  size = 0.25) +
+  geom_line(aes(y = seasonal, x = Date), color = "#c13d75ff") 
 
-
-
+ggplot(Rainfall_Components) +
+  geom_line(aes(y = Observed, x = Date),  size = 0.25) +
+  geom_line(aes(y = seasonal_shift, x = Date), color = "#c13d75ff") 
 ```
 
 
@@ -171,7 +208,7 @@ Monotonic trends are a gradual shift over time that is consistent in direction. 
 # Exercise 12: Now remove the seasonality and apply another test. Compare the results with what you obtained on Exercise 9.
 
 
-
+Temp_trend <- trend::smk.test(ts_temperature)
 
 
 
