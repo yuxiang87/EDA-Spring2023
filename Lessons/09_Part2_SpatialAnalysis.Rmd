@@ -71,9 +71,11 @@ epa_pm25_sites_sf <- read_csv('./Data/Raw/EPAair_PM25_NC2018_raw.csv') %>%
 class(epa_pm25_sites_sf)
 
 #What is its CRS again?
+st_crs(epa_pm25_sites_sf)
 st_crs(epa_pm25_sites_sf)$epsg
 
 #Plot the data
+mapview(epa_pm25_sites_sf)
 ggplot(data=epa_pm25_sites_sf) +
   geom_sf()
 ```
@@ -117,19 +119,19 @@ mapView(counties_sf, zcol = "AWATER")
 
 ```{r read HUCs shapefile}
 #Read the shapefile into an sf dataframe named "huc8_sf"
-
+huc8_sf<- st_read('./Data/Spatial/NCHUC8.shp') 
 
 #Reveal the columns
-
+colnames(huc8_sf)
 
 #Check the CRS
-
+st_crs(huc8_sf) 
 
 #Examine some records
 head(huc8_sf)
 
 #View the data as a map, colored by the acreage in each
-
+mapView(huc8_sf, zcol = "ACRES")
 
 
 
@@ -141,13 +143,16 @@ head(huc8_sf)
 
 ```{r Select the Upper Neuse HUC 8}
 #Read the shapefile into an sf dataframe
-
+huc8_sf_2 <- st_read('./Data/Spatial/NCHUC8.shp') %>% 
+  filter(SUBBASIN == "Upper Neuse")
 
 
 #Create a map
+mapview(huc8_sf, col.regions = 'orange')+ 
+  mapview(huc8_sf_2, col.regions = 'purple')
 
-
-
+mapview(huc8_sf_2, col.regions = 'purple')+
+  mapview(huc8_sf, col.regions = 'orange')
 
 ```
 
@@ -172,7 +177,7 @@ nrow(powerplants_sf)
 
 #View on a map - specify the geometry column to draw faster
 plot(powerplants_sf$geometry)
-
+mapview(powerplants_sf$geometry)
 #Filter for just powerplants found in NC
 nc_powerplants_sf <- powerplants_sf %>% 
   filter(STATE == "NC") 
@@ -210,7 +215,7 @@ We'll focus on just a few variables: Estimates of people in poverty ("E_POV") an
 #Read the 2018 SVI county-level dataset for NC
 svi2018_nc_raw <- read.csv(
   'https://svi.cdc.gov/Documents/Data/2018_SVI_Data/CSV/States_Counties/NorthCarolina_COUNTY.csv',
-  colClasses = c('FIPS' = 'factor')) %>% 
+  colClasses = c('FIPS' = 'factor')) %>% #note fips is factor
   select(COUNTY, FIPS, LOCATION, E_TOTPOP, E_POV, E_MINRTY)
 
 #Check structure
@@ -252,12 +257,19 @@ wind_raw <- read.csv('https://raw.githubusercontent.com/ENV859/EnviroAtlasData/m
   summarize(SumWindEnergy = sum(AvgWindEnergy))
   
 #Join to HUC_8 features
-huc8_sf_join = merge(x = huc8_sf,
+huc8_sf_merge = merge(x = huc8_sf,
                      y = wind_raw,
                      by.x = 'HUC_8',
                      by.y = 'HUC_8')
+huc8_sf_join <- huc8_sf %>% left_join(wind_raw, by = c('HUC_8'))
+
 
 #View the outputs
+mapview(huc8_sf_merge,
+        zcol = 'SumWindEnergy')
+mapview(huc8_sf_join,
+        zcol = 'SumWindEnergy')
+
 ggplot(data=huc8_sf_join) +
   geom_sf(aes(fill=SumWindEnergy)) +
   labs(
@@ -287,14 +299,14 @@ mapview(state_sf)
 
 ```{r Aggregate the HUC data on an attribute, saving as huc2_sf}
 #List the unique values in the DWQ_Basin field
-
+unique(huc8_sf_join$DWQ_Basin)
 
 
 #Summarize on DWQ Basin value
-
+huc2_sf <- huc8_sf_join %>% group_by(DWQ_Basin) %>% summarize(ACRES = sum(ACRES), SQ_MILES = sum(SQ_MILES))
 
 #Map the data
-
+mapview(huc2_sf,zcol = 'ACRES')
 
 ```
 
