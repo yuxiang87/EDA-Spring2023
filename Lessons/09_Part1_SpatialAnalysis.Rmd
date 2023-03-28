@@ -172,7 +172,7 @@ Projecting data is the process of converting spherical coordinates to Cartesian 
  
  * The earth is not a perfect sphere to begin with.
 
-The "solution" to these issues involves creating a vast number of different coordinate reference systems, each consisting of:
+The "solution" to these issues involves creating a vast number of different _coordinate reference systems_, each consisting of:
 
 1. A mathematical representation of the earth's shape, often constrained to a specific extent to enhance accuracy at that extent (at the cost of increased distortion away from that extent). These representations are referred to as the `datums`, `spheroids`, or `ellipsoids` of a specific coordinate reference system. 
 

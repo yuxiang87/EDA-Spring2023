@@ -5,6 +5,7 @@ date: "Spring 2023"
 output: pdf_document
 editor_options:
   chunk_output_type: console
+  always_allow_html: true
 ---
 
 # 1. INTRODUCTION
@@ -133,6 +134,8 @@ head(huc8_sf)
 #View the data as a map, colored by the acreage in each
 mapView(huc8_sf, zcol = "ACRES")
 
+ggplot() +
+  geom_sf(data=huc8_sf,aes(fill=ACRES))
 
 
 ```
@@ -366,8 +369,12 @@ neuse_intersect_1 <- counties_sf_utm[neuse_sf,]
 neuse_intersect_2 <- counties_sf_utm %>% 
   filter(st_intersects(x = ., y = neuse_sf, sparse = FALSE))
 
+neuse_intersect_3<- counties_sf_utm %>% st_filter(neuse_sf)
+
 #View the result
 myMap + mapview(neuse_intersect_2, alpha.regions = 0)
+myMap + mapview(neuse_intersect_3, alpha.regions = 0)
+
 
 #Actually intersect the counties (not just select those that intersect)
 neuse_counties_sf <- neuse_sf %>% 
@@ -386,16 +393,21 @@ mapview(neuse_counties_sf, zcol='Area_m2')
 
 ```{r EXERCISE: Clipping}
 #Select the Triangle County from the 
+Triangle_sf <- counties_sf_utm %>% filter(NAME %in% c("Chatham", "Durham","Orange","Wake"))
+mapview(Triangle_sf)
+mapview(counties_sf_utm)
 
 
-  
 #Grab the intersecting HUC_8s
-
+Tringle_HUC8_sf <- huc8_sf_utm %>% 
+  st_intersection(Triangle_sf)
+myMap + mapview(Tringle_HUC8_sf, alpha.regions = 0)
 
 
 #Intersect the HUC_8s
-
-
+Tringle_HUC8_sf <- Tringle_HUC8_sf %>% 
+  mutate(Area_m2 = as.numeric(st_area(Tringle_HUC8_sf$geometry)))
+mapview(Tringle_HUC8_sf)
 
 ```
 
