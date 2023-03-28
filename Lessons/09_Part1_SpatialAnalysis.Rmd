@@ -51,7 +51,7 @@ sf::sf_use_s2(FALSE)
 The `sf` package enables a new data type to be included in our data frames - the **geometry** data type. Geometries are comprised of coordinate pairs that form to create **geometric objects**. These can be:
 -   **points** - created from a single coordinate pair; 
 -   **lines** - created from a sequence of coordinate pairs representing the start, the end, and any vertex along the line (i.e. where it changes direction); and
--   **polygons** - also created from a sequence of coordinate pairs, but where the first and last pair are in the same location, thus closing the shape and defining an area. 
+-   **polygons** - also created from a sequence of coordinate pairs, but where the _first and last pair_ are in the same location, thus closing the shape and defining an area. 
 
 These geometries represent features located in geographic space. (There are other geometry types, with a full set listed [here](https://bit.ly/3hrPcZO). However, to keep things simple, we'll focus on points, lines, and polygons.)
 
@@ -117,9 +117,9 @@ EPAair.sites <- EPAair %>%
 EPAair.sf <- EPAair.sites %>% 
   st_as_sf(coords = c('mean_Lng','mean_Lat'),
            crs=4326)
-
+class(EPAair.sf)
 #View the data using the methods above...
-
+mapview(EPAair.sf)
 ```
 
 ### EXERCISE: Creating a spatial dataframe from known coordinates
@@ -157,7 +157,7 @@ Let's explore:
 ```{r buffer Grainger hall}
 #Buffer Grainger Hall 1 unit
 the_buffer <- sf_GraingerHall %>% st_buffer(1)
-
+##1 indicate 1 degree in longitude and latitude
 #View the result
 mapview(the_buffer)
 ```
@@ -182,7 +182,7 @@ All simple features need to be associated with a defined coordinate reference sy
 
 
 ## 3.2  EPSG codes and "PROJ4Strings"
-
+##note epsg.io
 The "4326" in the `crs = 4326` is an EPSG code, a number used to look up a specific crs.
 
 The website <http://spatialreference.org/> lists hundreds of standard CRS along with a map and description of where it's appropriate. For example, a useful one in North Carolina is [UTM Zone 17N-NAD 83](http://spatialreference.org/ref/epsg/nad83-utm-zone-17n/). Note also that its *EPSG code* is `26917`; this EPSG code one way we can assign a CRS to our data. If you click on the the "Well Known Text as HTML" link, it will reveal all the specific associated with that CRS... (Another site listing coordinate reference systems is <http://www.epsg.org/>)
